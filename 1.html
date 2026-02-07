@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Interface</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: url('static/1.jpeg') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "Comic Sans MS", sans-serif;
+        }
+        .message-container {
+            position: absolute;
+            bottom: 20px;
+            width: 90%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 25px;
+            padding: 20px 50px;
+        }
+        .message-container input {
+            border: none;
+            outline: none;
+            font-size: 20px;
+            background: transparent;
+            padding: 12px;
+            margin-bottom: 10px;
+            height: 80px;
+            resize: vertical;
+            font-family: "Comic Sans MS", sans-serif;
+        }
+        .sql-response {
+            background-color: #d1e8ff;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            max-width: 70%;
+            font-size: 20px;
+            font-family: "Comic Sans MS", sans-serif;
+            display: flex; /* Added to align text and button */
+            align-items: center; /* Added to align text and button */
+        }
+        .sql-response button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px; /* Add some space between the text and icon */
+            padding: 0;
+        }
+        .copy-button-image {
+            background: url('static/copy.png') no-repeat center center/contain;
+            width: 45px; /* Adjust size as needed */
+            height: 45px; /* Adjust size as needed */
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+        }
+
+        .explanation {
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            max-width: 70%;
+            font-size: 20px;
+            font-family: "Comic Sans MS", sans-serif;
+        }
+        .icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            margin: 0 5px;
+            padding: 5px;
+            border-radius: 50%;
+            position: relative;
+        }
+        .send-icon {
+            background: url('static/send.png') no-repeat center center/contain;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+        }
+        .send-button {
+            background: #4285F4;
+            border: none;
+            border-radius: 50%;
+            padding: 8px;
+            margin-left: auto;
+            margin-right: 20px;
+            position: relative;
+        }
+        .icon-button img {
+            width: 20px;
+            height: 20px;
+        }
+        .button-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-buttons {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        .sidebar-buttons button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 16px;
+            position: relative;
+        }
+        .sidebar-buttons button::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .sidebar-buttons button:hover::after {
+            opacity: 1;
+        }
+        .sidebar-buttons img {
+            width: 35px;
+            height: 35px;
+        }
+        .sidebar-container {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);;
+            color: white;
+            padding: 20px;
+            transition: left 0.3s;
+            overflow-y: auto;
+            display: none;
+        }
+        .sidebar-container.open {
+            left: 0;
+            display: block;
+        }
+        .sidebar-container .horizontal-buttons {
+            display: flex;
+            justify-content: space-evenly;
+            margin-bottom: 20px;
+        }
+        .sidebar-container .horizontal-buttons button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 10px;
+            position: relative;
+        }
+        .sidebar-container .horizontal-buttons button img {
+            width: 26px;
+            height: 26px;
+            margin-bottom: 5px;
+        }
+        .sidebar-container .horizontal-buttons button::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .sidebar-container .horizontal-buttons button:hover::after {
+            opacity: 1;
+        }
+        .sidebar-container .close-button {
+            width: 100%;
+            text-align: left;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .sidebar-container .close-button img {
+            width: 35px;
+            height: 35px;
+        }
+        .icon-button::after, .send-button::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .icon-button:hover::after, .send-button:hover::after {
+            opacity: 1;
+        }
+        .message-bubble {
+            background-color: #e0e0e0;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            max-width: 70%;
+            font-size: 20px;
+            font-family: "Comic Sans MS", sans-serif;
+        }
+        .sql-response {
+            background-color: #d1e8ff;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            max-width: 70%;
+            font-size: 20px;
+            font-family: "Comic Sans MS", sans-serif;
+        }
+        .sql-response button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            margin-top:5px;
+            padding: 0;
+            font-size: 18px;
+            font-family: "Comic Sans MS", sans-serif;
+        }
+        .message-display{
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            overflow-y: auto;
+            max-height: 500px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;font-size: 20px;
+            font-family: "Comic Sans MS", sans-serif;
+        }
+
+        .message-display::-webkit-scrollbar {
+            display: none;
+        }
+
+        .explanation {
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            max-width: 70%;
+            font-size: 20px;
+            font-family: "Comic Sans MS", sans-serif;
+        }
+        .user-message {
+            align-self: flex-end;
+        }
+        .ai-message {
+            align-self: flex-start;
+            background-color:rgb(173, 244, 249);
+            color: black;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            max-width: 70%;
+            font-size: 20px;
+            font-family: "Comic Sans MS", sans-serif;
+        }
+        
+        .sql-query-highlight {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .copy-button-image {
+            background: url('static/copy.png') no-repeat center center/contain;
+            width: 45px; /* Adjust size as needed */
+            height:45px; /* Adjust size as needed */
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+            margin-left: 5px; /* Add some space between the text and icon */
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar-buttons">
+        <button onclick="openSidebar()" data-tooltip="Open Sidebar">
+            <img src="static/sidebar.png" alt="Sidebar">
+        </button>
+    </div>
+    
+    <div class="sidebar-container" id="sidebar">
+        <button class="close-button" onclick="closeSidebar()">
+            <img src="static/sidebar.png" alt="Close"> Close Sidebar
+        </button>
+        <div class="horizontal-buttons">
+            <button onclick="newChat()" data-tooltip="New Chat">
+                <img src="static/newchat.webp" alt="New Chat">
+            </button>
+            <button onclick="smartQueryBot()" data-tooltip="SmartQueryBot">
+                <img src="static/bot.png" alt="Bot">
+            </button>
+            <button onclick="searchFunction()" data-tooltip="Search">
+                <img src="static/search.png" alt="Search">
+            </button>
+        </div>
+    </div>
+    
+    <div class="message-container">
+        <div class="message-display" id="messageDisplay"></div>
+        <input type="text" id="userInput" placeholder="Type your message..." onkeydown="if (event.key === 'Enter') sendMessage()">
+        <div class="button-wrapper">
+            <div>
+                <button class="icon-button" data-tooltip="Microphone"> 
+                    <img src="static/mic.gif" alt="Microphone">
+                </button>
+                <button class="icon-button" data-tooltip="Upload from Gallery">
+                    <img src="static/photo.gif" alt="Gallery">
+                </button>
+            </div>
+            <button class="send-button" data-tooltip="Send" onclick="sendMessage()">
+                <div class="send-icon"></div>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            displayAIMessage("Hello! I am SmartQueryBot. How can I assist you today?");
+        });
+
+        function openSidebar() {
+            document.getElementById("sidebar").classList.add("open");
+        }
+        function closeSidebar() {
+            document.getElementById("sidebar").classList.remove("open");
+        }
+        function newChat() {
+            alert("Starting new chat...");
+        }
+        function smartQueryBot() {
+            alert("Opening SmartQueryBot...");
+        }
+        function searchFunction() {
+            alert("Search function activated...");
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById("userInput").value;
+            if (userInput.trim() === "") return;
+
+            displayUserMessage(userInput);
+
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Check if the response contains SQL and an explanation
+                if (data.sql && data.explanation) {
+                    displaySQLResponse(data.sql, data.explanation);
+                } else {
+                    displayAIMessage(data.response); 
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                displayAIMessage("An error occurred while processing your request.");
+            });
+
+            document.getElementById("userInput").value = "";
+        }
+
+        function displayUserMessage(message) {
+            const messageDisplay = document.getElementById("messageDisplay");
+            const userMessageBubble = document.createElement("div");
+            userMessageBubble.classList.add("message-bubble", "user-message");
+            userMessageBubble.textContent = message;
+            messageDisplay.appendChild(userMessageBubble);
+            messageDisplay.scrollTop = messageDisplay.scrollHeight;
+        }
+
+        function displayAIMessage(message) {
+            const messageDisplay = document.getElementById("messageDisplay");
+            const aiMessageBubble = document.createElement("div");
+            aiMessageBubble.classList.add("message-bubble", "ai-message");
+            aiMessageBubble.innerHTML = message; // Allow HTML content from Gemini
+            messageDisplay.appendChild(aiMessageBubble);
+            messageDisplay.scrollTop = messageDisplay.scrollHeight;
+        }
+
+        
+        function displaySQLResponse(sql, explanation) {
+            const messageDisplay = document.getElementById("messageDisplay");
+        
+            // SQL Response with Copy Button
+            const sqlResponseBubble = document.createElement("div");
+            sqlResponseBubble.classList.add("sql-response", "ai-message");
+            sqlResponseBubble.innerHTML = `
+                <span class="sql-query-highlight">${sql}</span>
+                <button onclick="copyToClipboard('${sql}')" class="copy-button-image"></button>
+            `;
+            messageDisplay.appendChild(sqlResponseBubble);
+        
+            // Explanation (outside the SQL box)
+            const explanationBubble = document.createElement("div");
+            explanationBubble.classList.add("explanation", "ai-message");
+            explanationBubble.textContent = explanation;
+            messageDisplay.appendChild(explanationBubble);
+        
+            messageDisplay.scrollTop = messageDisplay.scrollHeight;
+        }
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    console.log('Text copied to clipboard:', text);
+                    alert("Copied!");
+                }).catch(err => {
+                    console.error('Could not copy text:', err);
+                    alert("Failed to copy: " + err);
+                });
+            } else {
+                // Fallback method using a hidden textarea
+                const textarea = document.createElement("textarea");
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand("copy");
+                    alert("Copied!");
+                } catch (err) {
+                    alert("Failed to copy: " + err);
+                }
+                document.body.removeChild(textarea);
+            }
+        }
+
+
+    </script>
+    
+
+</body>
+</html>

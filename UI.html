@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Petals SQL | AI Query Converter</title>
+    <style>
+        :root {
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-purple: #d300c5;
+            --neon-green: #00ff9d;
+            --dark-bg: #1a0033;
+            --darker-bg: #0d001a;
+            --text-glow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+            --petal-bg: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><path fill="%23ff2a6d" d="M50 0Q60 30 80 30Q50 50 20 30Q40 30 50 0Z"/><path fill="%2305d9e8" d="M100 50Q70 60 70 80Q50 50 70 20Q70 40 100 50Z"/><path fill="%23d300c5" d="M50 100Q40 70 20 70Q50 50 80 70Q60 70 50 100Z"/><path fill="%2300ff9d" d="M0 50Q30 40 30 20Q50 50 30 80Q30 60 0 50Z"/></svg>');
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Poppins:wght@300;400;500;600&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-bg);
+            color: white;
+            margin: 0;
+            padding: 0;
+            background-image: var(--petal-bg);
+            background-size: 200px;
+            background-attachment: fixed;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 50px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Neon Petals Overlay */
+        .petals-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: var(--petal-bg);
+            background-size: 300px;
+            opacity: 0.1;
+            z-index: -1;
+            animation: floatPetals 60s linear infinite;
+        }
+        
+        @keyframes floatPetals {
+            0% { background-position: 0 0; }
+            100% { background-position: 1000px 1000px; }
+        }
+        
+        /* Navigation */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(13, 0, 26, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            margin: 20px auto;
+            width: 60%;
+            border: 1px solid var(--neon-purple);
+            box-shadow: 0 0 20px rgba(211, 0, 197, 0.3);
+        }
+        
+        .nav-container a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 25px;
+            font-size: 16px;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-container a:hover {
+            background: var(--neon-pink);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 42, 109, 0.4);
+        }
+        
+        .nav-container img {
+            width: 20px;
+            height: 20px;
+            filter: brightness(0) invert(1);
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-container a:hover img {
+            transform: scale(1.2);
+        }
+        
+        /* Admin Button */
+        .adminlogin {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--neon-purple);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px var(--neon-purple);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .adminlogin:hover {
+            background: var(--neon-blue);
+            box-shadow: 0 0 30px var(--neon-blue);
+            transform: scale(1.1) rotate(15deg);
+        }
+        
+        /* Header */
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: rgba(13, 0, 26, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 30px rgba(5, 217, 232, 0.3);
+        }
+        
+        .header-gif {
+            width: 60px;
+            height: 60px;
+            filter: drop-shadow(0 0 5px var(--neon-blue));
+            animation: pulse 2s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--neon-blue);
+            text-shadow: var(--text-glow);
+            letter-spacing: 2px;
+            margin: 0;
+            animation: textGlow 3s infinite alternate;
+        }
+        
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue); }
+            100% { text-shadow: 0 0 15px var(--neon-blue), 0 0 30px var(--neon-blue), 0 0 45px var(--neon-purple); }
+        }
+        
+        h2, h4 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px rgba(255, 42, 109, 0.5);
+        }
+        
+        p {
+            font-size: 18px;
+            color: #ccc;
+            line-height: 1.6;
+        }
+        
+        /* Buttons */
+        .btn-container {
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+        
+        .btn-primary:hover {
+            background: var(--neon-green);
+            box-shadow: 0 0 25px var(--neon-green);
+            transform: translateY(-3px);
+        }
+        
+        .btn-light {
+            background: transparent;
+            color: white;
+            border: 2px solid var(--neon-pink);
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+        
+        .btn-light:hover {
+            background: var(--neon-pink);
+            box-shadow: 0 0 25px var(--neon-pink);
+            transform: translateY(-3px);
+        }
+        
+        /* Images */
+        .image-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .main-image {
+            width: 350px;
+            border-radius: 15px;
+            border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 30px rgba(5, 217, 232, 0.4);
+            transition: transform 0.3s ease;
+        }
+        
+        .main-image:hover {
+            transform: scale(1.03);
+        }
+        
+        .side-gif {
+            width: 200px;
+            border-radius: 15px;
+            border: 2px solid var(--neon-purple);
+            box-shadow: 0 0 20px rgba(211, 0, 197, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .side-gif:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        /* Features */
+        .feature-section {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .feature-box {
+            width: 30%;
+            min-width: 250px;
+            padding: 25px;
+            background: rgba(13, 0, 26, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid var(--neon-purple);
+            box-shadow: 0 0 20px rgba(211, 0, 197, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px var(--neon-purple);
+            border-color: var(--neon-blue);
+        }
+        
+        .feature-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+        }
+        
+        .feature-box h3 {
+            color: var(--neon-green);
+            margin-bottom: 15px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        /* Resources */
+        .resource {
+            display: flex;
+            align-items: center;
+            background: rgba(13, 0, 26, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 30px rgba(5, 217, 232, 0.2);
+        }
+        
+        .resource-content {
+            padding: 30px;
+            flex: 1;
+        }
+        
+        .resource-content strong {
+            color: var(--neon-pink);
+            font-size: 1.3rem;
+            display: block;
+            margin-bottom: 15px;
+        }
+        
+        .resource img {
+            width: 40%;
+            height: auto;
+            border-left: 1px solid var(--neon-purple);
+            transition: transform 0.3s ease;
+        }
+        
+        .resource:hover img {
+            transform: scale(1.05);
+        }
+        
+        .resource:nth-child(2) {
+            flex-direction: row-reverse;
+        }
+        
+        .resource:nth-child(2) img {
+            border-left: none;
+            border-right: 1px solid var(--neon-purple);
+        }
+        
+        /* FAQ */
+        .faq-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 30px;
+            background: rgba(13, 0, 26, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.2);
+        }
+        
+        .faq-container h2 {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: var(--neon-green);
+        }
+        
+        .faq-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .faq-logo img {
+            max-width: 150px;
+            height: auto;
+            filter: drop-shadow(0 0 10px var(--neon-blue));
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 0;
+        }
+        
+        .faq-question {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            color: var(--neon-pink);
+        }
+        
+        .faq-question span {
+            color: var(--neon-blue);
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-item.active .faq-question span {
+            transform: rotate(45deg);
+            color: var(--neon-pink);
+        }
+        
+        .faq-answer {
+            font-size: 18px;
+            color: #ccc;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding-top 0.5s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding-top: 15px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                width: 90%;
+                flex-wrap: wrap;
+            }
+            
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header-gif {
+                width: 40px;
+                height: 40px;
+            }
+            
+            h1 {
+                font-size: 36px;
+            }
+            
+            .image-wrapper {
+                flex-direction: column;
+            }
+            
+            .main-image {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .side-gif {
+                width: 150px;
+            }
+            
+            .feature-box {
+                width: 100%;
+            }
+            
+            .resource, .resource:nth-child(2) {
+                flex-direction: column;
+            }
+            
+            .resource img, .resource:nth-child(2) img {
+                width: 100%;
+                border-left: none;
+                border-right: none;
+                border-top: 1px solid var(--neon-purple);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="petals-overlay"></div>
+    
+    <div class="nav-container">
+        <a href="http://localhost/hack/loginsignup.php"><img src="Signup.gif" alt="Signup"> Login</a>
+        <a href="http://localhost/hack/contact.php"><img src="contact.gif" alt="Contact"> Contact us</a>
+        <a href="team.html"><img src="team.gif" alt="Team"> Our Team</a>
+        <a href="about.html"><img src="about.gif" alt="About"> About us</a>
+    </div>
+
+    <a href="admin_login.php" class="adminlogin"><img src="Admin2.gif" alt="Admin"></a>
+
+    <div class="container">
+        <div class="header-container">
+            <img src="wired-lineal-981-consultation-hover-conversation-alt.gif" alt="Loading" class="header-gif">
+            <h1>Smart QueryBot</h1>
+            <img src="wired-lineal-981-consultation-hover-conversation-alt.gif" alt="Loading" class="header-gif">
+        </div>
+
+        <h2 style="margin-top: 5px;">Text to SQL Converter</h2>
+        
+        <p><b>Convert natural language to SQL queries instantly. Simply describe what you want to query and let AI create the perfect SQL statement - no manual coding required.</b></p>
+        
+        <div class="btn-container">
+            <a href="http://127.0.0.1:5001" class="btn btn-primary">Try Now Free</a>
+            <a href="notes.html" class="btn btn-light">SQL Notes</a>
+        </div>
+
+        <div class="image-wrapper">
+            <img src="Chatbot-virtual-assistant-for--unscreen.gif" alt="Chatbot GIF Left" class="side-gif">
+            <img src="https://www.pickl.ai/blog/wp-content/uploads/2024/02/21743443_6505989.jpg" alt="Query and Pie Chart" class="main-image">
+            <img src="Chatbot-virtual-assistant-on-A-unscreen.gif" alt="Chatbot GIF Right" class="side-gif">
+        </div>
+
+        <div class="feature-section">
+            <div class="feature-box">
+                <h3>AI-Powered</h3>
+                <p>Convert natural language to SQL instantly.</p>
+            </div>
+            <div class="feature-box">
+                <h3>Optimized Queries</h3>
+                <p>Get efficient SQL queries automatically.</p>
+            </div>
+            <div class="feature-box">
+                <h3>Smart Suggestions</h3>
+                <p>Get AI-powered recommendations.</p>
+            </div>
+            <div class="feature-box">
+                <h3>Secure Execution</h3>
+                <p>Ensures safe query execution.</p>
+            </div>
+            <div class="feature-box">
+                <h3>Cross-DB Support</h3>
+                <p>Works with multiple databases.</p>
+            </div>
+            <div class="feature-box">
+                <h3>User-Friendly</h3>
+                <p>Easy-to-use with intuitive UI.</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 40px 0;">
+            <h4>Resources</h4>
+        </div>
+
+        <div class="resource">
+            <div class="resource-content">
+                <p>
+                    <strong>TEXT2SQL: What capabilities does TEXT2SQL.AI offer?</strong><br>
+                    TEXT2SQL.AI provides AI-enhanced services that allow users to generate SQL queries from text descriptions in multiple languages. 
+                    It can also translate SQL queries into plain English explanations and fix errors in SQL queries. The platform supports customizable 
+                    integration of database schemas, including tables, columns, and types, and is compatible with various SQL dialects such as PostgreSQL, 
+                    MySQL, MS SQL, and MariaDB. With multilingual support across major global languages and easy API integration, TEXT2SQL.AI extends its 
+                    capabilities to various applications.
+                </p>
+            </div>
+            <img src="tai.png" alt="TEXT2SQL">
+        </div>
+        
+        <div class="resource">
+            <img src="insp.png" alt="COEP CSI Hackathon">
+            <div class="resource-content">
+                <p>
+                    <strong>COEP CSI HACKATHON - AI-Powered SQL Assistant</strong><br>
+                    The problem statement highlights the challenges many developers face when working with databases. Designing a well-structured database 
+                    schema based on business needs requires expertise, and generating DDL (Data Definition Language) statements to create tables can be complex. 
+                    Developers also struggle with generating DML (Data Manipulation Language) statements for inserting, updating, or deleting records and 
+                    translating natural language queries into SQL.
+                </p>
+            </div>
+        </div>
+        
+        <div class="resource">
+            <div class="resource-content">
+                <p>
+                    <strong>GEMINI API: Fast and Free to Get Started</strong><br>
+                    The Gemini API allows users to quickly integrate AI models with a Gemini API key. It offers a generous free tier with flexible pay-as-you-go 
+                    plans that help scale applications efficiently. Providing access to Google DeepMind's latest Gemini models, the API is designed for multimodal 
+                    capabilities, enabling seamless understanding of text, code, images, audio, and video.
+                </p>
+            </div>
+            <img src="gem.png" alt="Gemini API">
+        </div>
+
+        <div class="faq-container">
+            <div class="faq-logo">
+                <img src="fyq.jpg" alt="FAQ Logo">
+            </div>
+            <h2>Frequently Asked Questions</h2>
+        
+            <div class="faq-item">
+                <div class="faq-question">What is Smart QueryBot? <span>+</span></div>
+                <div class="faq-answer">Smart QueryBot is an AI-powered tool that converts natural language into SQL queries.</div>
+            </div>
+        
+            <div class="faq-item">
+                <div class="faq-question">Is Smart QueryBot free to use? <span>+</span></div>
+                <div class="faq-answer">Yes, Smart QueryBot offers a free version with basic features.</div>
+            </div>
+        
+            <div class="faq-item">
+                <div class="faq-question">Which databases are supported? <span>+</span></div>
+                <div class="faq-answer">It supports MySQL, PostgreSQL, SQL Server, and more.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Who is the designer of this website? <span>+</span></div>
+                <div class="faq-answer">The founder is Sanket Rajkumar Gudade.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Which college is associated? <span>+</span></div>
+                <div class="faq-answer">The associated college is Government Polytechnic, Nagpur.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Is there any API support? <span>+</span></div>
+                <div class="faq-answer">For Now NO. But in future definitely.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Does it work on mobile devices? <span>+</span></div>
+                <div class="faq-answer">Yes, it is fully responsive and works on mobile, tablet, and desktop devices.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">How does it generate SQL queries? <span>+</span></div>
+                <div class="faq-answer">It uses AI and NLP models to analyze user input and generate optimized SQL queries.</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const faqItems = document.querySelectorAll(".faq-item");
+    
+            faqItems.forEach(item => {
+                const question = item.querySelector(".faq-question");
+                question.addEventListener("click", function () {
+                    item.classList.toggle("active");
+    
+                    // Toggle the "+" and "-" symbol
+                    const span = question.querySelector("span");
+                    span.textContent = item.classList.contains("active") ? "-" : "+";
+                });
+            });
+            
+            // Create floating petals effect
+            const petalsOverlay = document.querySelector('.petals-overlay');
+            for (let i = 0; i < 20; i++) {
+                const petal = document.createElement('div');
+                petal.style.position = 'absolute';
+                petal.style.width = `${Math.random() * 30 + 10}px`;
+                petal.style.height = `${Math.random() * 30 + 10}px`;
+                petal.style.background = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                petal.style.borderRadius = '50%';
+                petal.style.opacity = '0.3';
+                petal.style.filter = 'blur(5px)';
+                petal.style.left = `${Math.random() * 100}%`;
+                petal.style.top = `${Math.random() * 100}%`;
+                petal.style.animation = `floatPetal ${Math.random() * 20 + 10}s linear infinite`;
+                petal.style.zIndex = '-1';
+                
+                document.body.appendChild(petal);
+            }
+        });
+    </script>
+</body>
+</html>

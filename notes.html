@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Systems - Chapter 1 & 2</title>
+    <style>
+        /* CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: linear-gradient(135deg, #2b5876, #4e4376);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            max-height: 90vh;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Heading Styles */
+        h2 {
+            text-align: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        h5 {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        /* Paragraph Styles */
+        p {
+            font-size: 1em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        p strong {
+            font-weight: bold;
+        }
+
+        /* Example Styles */
+        .example {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .example ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+
+        .example li {
+            margin-bottom: 10px;
+        }
+
+        .example pre {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        .example code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+        }
+
+        /* Image Styles */
+        img {
+            width: 450px;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+        }
+
+        img:hover {
+            transform: scale(1.05);
+        }
+
+        .zoomed-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .zoomed-image img {
+            width: auto;
+            max-width: 90%;
+            max-height: 90%;
+            cursor: zoom-out;
+        }
+
+        /* Image Caption Styles */
+        .image-caption {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .chapter-container {
+            display: none;
+        }
+
+        .chapter-container.active {
+            display: block;
+        }
+
+        .chapter-navigation {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .chapter-button {
+            cursor: pointer;
+            padding: 10px 20px;
+            margin: 0 5px;
+            background: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .chapter-button:hover {
+            background: #e68900;
+        }
+        /* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse; /* Ensures borders are merged */
+  margin: 20px 0;
+  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+  color: white; /* Text color */
+}
+
+/* Table Header Styling */
+table th {
+  background-color: rgba(0, 0, 0, 0.3); /* Darker background for headers */
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd; /* Border for header cells */
+  font-weight: bold;
+}
+
+/* Table Body Styling */
+table td {
+  padding: 10px;
+  border: 1px solid #ddd; /* Border for data cells */
+}
+
+/* Zebra Striping for Rows */
+table tbody tr:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.1); /* Alternate row color */
+}
+
+/* Hover Effect for Rows */
+table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.2); /* Highlight row on hover */
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+      <div class="chapter-navigation">
+        <button class="chapter-button" onclick="showChapter('chapter1')">Chapter 1</button>
+        <button class="chapter-button" onclick="showChapter('chapter2')">Chapter 2</button>
+        <button class="chapter-button" onclick="showChapter('chapter3')">Chapter 3</button>
+        <button class="chapter-button" onclick="showChapter('chapter4')">Chapter 4</button>
+        <button class="chapter-button" onclick="showChapter('chapter5')">Chapter 5</button>
+
+    </div>
+    <br>
+        <div class="chapter-container active" id="chapter1">
+            <h2>Chapter 1: Foundations of Database Systems</h2>
+            <section>
+                <h3>1.1 Introduction to Data and Information</h3>
+                <h4>Data</h4>
+                <p><strong>Definition:</strong> Raw, unprocessed facts, figures, or symbols that have no inherent meaning. Data can be numerical, textual, or multimedia.</p>
+                <p><strong>Long Definition:</strong> Data represents the basic building blocks of information. It is collected observations or measurements of the world around us, stored in a format suitable for processing.</p>
+                <div class="example">
+                    <p><strong>Examples:</strong></p>
+                    <ul>
+                        <li>A student's name: "Alice Smith" (textual)</li>
+                        <li>A product's price: 29.99 (numerical)</li>
+                        <li>A digital photograph (multimedia)</li>
+                    </ul>
+                </div>
+                <img src="Data.jpg" alt="Data Types" onclick="zoomImage('Data.jpg')">
+                <p class="image-caption">Data</p>
+
+                <h4>Information</h4>
+                <p><strong>Definition:</strong> Processed, organized, and structured data that provides context and meaning. Information is data that has been made useful.</p>
+                <p><strong>Long Definition:</strong> Information is derived from data through analysis, interpretation, and organization. It transforms raw data into a form that is understandable and useful for decision-making.</p>
+                <div class="example">
+                    <p><strong>Examples:</strong></p>
+                    <ul>
+                        <li>A student's grade report, showing their performance in different subjects.</li>
+                        <li>A sales report, summarizing the total revenue generated by a company.</li>
+                        <li>A weather forecast, predicting future weather conditions.</li>
+                    </ul>
+                </div>
+                <img src="information.webp" alt="Data to Information Flow" onclick="zoomImage('information.webp')">
+                <p class="image-caption">information</p>
+
+                <h4>The Importance of Organized Data</h4>
+                <div class="example">
+                    <ul>
+                        <li><strong>Efficient retrieval:</strong> Allows for quick and easy access to specific information.</li>
+                        <li><strong>Data integrity:</strong> Structure and rules help maintain data accuracy and consistency.</li>
+                        <li><strong>Data analysis:</strong> Organized data is essential for extracting meaningful insights and patterns.</li>
+                        <li><strong>Decision-making:</strong> Reliable information derived from organized data supports informed decision-making.</li>
+                    </ul>
+                    <p><strong>Example:</strong> Imagine a library where books are piled randomly versus a library with a catalog and organized shelves. The organized library is much more efficient.</p>
+                </div>
+            </section>
+            <section>
+                <h3>1.2 Database Concepts</h3>
+                <h4>Definition of a Database</h4>
+                <p><strong>Definition:</strong> A structured collection of related data that is stored and managed in a way that allows for efficient retrieval, modification, and deletion.</p>
+                <p><strong>Long Definition:</strong> A database is an organized repositoryand managed in a way that allows for efficient retrieval, modification, and deletion.</p>
+                <p><strong>Long Definition:</strong> A database is an organized repository of data that provides a centralized and controlled environment for storing and managing information. It is designed to ensure data integrity, security, and accessibility.</p>
+                <img src="DatabaseConcept.webp" alt="Database Concept Diagram" onclick="zoomImage('DatabaseConcept.webp')">
+                <p class="image-caption">Database Concept Diagram</p>
+
+                <h4>Types of Databases</h4>
+                <h5>Relational Databases (RDBMS)</h5>
+                <p>Data is organized into tables with rows and columns. Relationships between tables are established using keys. <strong>Examples:</strong> MySQL, PostgreSQL, Oracle, SQL Server.</p>
+
+                <h5>NoSQL Databases</h5>
+                <p>Designed for handling large volumes of unstructured or semi-structured data. Various models:</p>
+                <ul>
+                    <li><strong>Key-Value Stores:</strong> Data stored as key-value pairs. <strong>Examples:</strong> Redis, DynamoDB.</li>
+                    <li><strong>Document-Oriented:</strong> Stores semi-structured data in JSON-like documents. <strong>Examples:</strong> MongoDB, CouchDB.</li>
+                    <li><strong>Column-Family:</strong> Optimized for large-scale distributed storage. <strong>Examples:</strong> Cassandra, HBase.</li>
+                    <li><strong>Graph Databases:</strong> Data stored as nodes and edges for complex relationships. <strong>Examples:</strong> Neo4j, ArangoDB.</li>
+                </ul>
+                <img src="rdbmsvssql.jpg" alt="RDBMS vs NoSQL Chart" onclick="zoomImage('rdbmsvssql.jpg')">
+                <p class="image-caption">RDBMS vs NoSQL Chart</p>
+
+                <h4>Database Management Systems (DBMS)</h4>
+                <p><strong>Definition:</strong> Software that allows users to create, manage, and access databases.</p>
+                <p><strong>Long Definition:</strong> A DBMS provides an interface between users and the database, handling tasks such as data storage, retrieval, security, and concurrency control. <strong>Examples:</strong> MySQL, PostgreSQL, Oracle, SQL Server, MongoDB.</p>
+                <img src="DBlayer.webp" alt="DBMS Layer Diagram" onclick="zoomImage('DBlayer.webp')">
+                <p class="image-caption">DBMS Layer Diagram</p>
+            </section>
+
+            <section>
+                <h3>1.3 Relational Database Model</h3>
+                <h4>Tables, Rows, Columns</h4>
+                <p><strong>Table:</strong> A collection of related data organized into rows and columns.</p>
+                <p><strong>Row (Tuple/Record):</strong> A horizontal set of data representing a single entity.</p>
+                <p><strong>Column (Attribute/Field):</strong> A vertical set of data representing a specific characteristic of the entity.</p>
+                <p><strong>Example:</strong> A "Students" table with columns like "StudentID," "Name," and "Major," and rows representing individual students.</p>
+                <img src="table.webp" alt="Table Rows Columns" onclick="zoomImage('table.webp')">
+                <p class="image-caption">Table Rows Columns</p>
+                <h4>Primary Keys, Foreign Keys, and Relationships</h4>
+                <p><strong>Primary Key:</strong> A unique identifier for each row in a table. It ensures that each record in the table is unique and cannot be null. <strong>Example:</strong> <code>StudentID</code> in the "Students" table.</p>
+
+                <p><strong>Foreign Key:</strong> A column in one table that references the primary key of another table, establishing a relationship between the two tables. It ensures referential integrity. <strong>Example:</strong> A "Courses" table with a <code>StudentID</code> foreign key referencing the <code>StudentID</code> primary key in the "Students" table.</p>
+
+                <p><strong>Candidate Key:</strong> A column or set of columns that can uniquely identify a row in a table. A table can have multiple candidate keys, but only one becomes the primary key. <strong>Example:</strong> In a "Students" table, both <code>StudentID</code> and <code>Email</code> could be candidate keys.</p>
+
+                <p><strong>Super Key:</strong> A set of columns that can uniquely identify a row in a table. It may include additional columns that are not strictly necessary for uniqueness. <strong>Example:</strong> In a "Students" table, <code>StudentID + Name</code> could form a super key.</p>
+
+                <p><strong>Composite Key:</strong> A primary key that consists of two or more columns to uniquely identify a row. <strong>Example:</strong> In an "Orders" table, <code>OrderID + ProductID</code> could form a composite key.</p>
+
+                <p><strong>Alternate Key:</strong> A candidate key that is not chosen as the primary key. It still uniquely identifies a row but is not the main identifier. <strong>Example:</strong> In a "Students" table, if <code>StudentID</code> is the primary key, <code>Email</code> could be an alternate key.</p>
+
+                <p><strong>Unique Key:</strong> A column or set of columns that ensures all values are unique, but unlike a primary key, it can contain null values. <strong>Example:</strong> In a "Users" table, <code>Username</code> could be a unique key.</p>
+
+                <p><strong>Relationships:</strong> Defines how tables are connected to each other. Common types include:</p>
+                <ul>
+                    <li><strong>One-to-One:</strong> Each record in Table A relates to exactly one record in Table B, and vice versa. <strong>Example:</strong> A "Students" table and a "StudentDetails" table where each student has only one set of details.</li>
+                    <li><strong>One-to-Many:</strong> A record in Table A can relate to multiple records in Table B, but a record in Table B relates to only one record in Table A. <strong>Example:</strong> A "Students" table and a "Courses" table where one student can enroll in many courses, but each course belongs to only one student.</li>
+                    <li><strong>Many-to-One:</strong> Multiple records in Table A relate to a single record in Table B. This is the inverse of one-to-many. <strong>Example:</strong> A "Courses" table and a "Students" table where many courses can be taught by a single student.</li>
+                    <li><strong>Many-to-Many:</strong> Records in Table A can relate to multiple records in Table B, and vice versa. This requires a junction table. <strong>Example:</strong> A "Students" table and a "Courses" table where students can enroll in multiple courses, and courses can have multiple students. A junction table like "StudentCourses" is used to manage this relationship.</li>
+                </ul>
+
+                <img src="keys.webp" alt="ER Diagram" onclick="zoomImage('keys.webp')">
+                <p class="image-caption"> KEY TYPES </p>
+
+                <h4>Database Normalization (Brief Introduction)</h4>
+                <p><strong>Definition:</strong> The process of organizing data in a database to reduce redundancy and improve data integrity.</p>
+                <p><strong>Normal Forms:</strong></p>
+                <ul>
+                    <li><strong>1NF (First Normal Form):</strong> Ensures each column contains atomic (indivisible) values and each row is unique.</li>
+                    <li><strong>2NF (Second Normal Form):</strong> Achieves 1NF and removes partial dependencies (all non-key attributes depend on the entire primary key).</li>
+                    <li><strong>3NF (Third Normal Form):</strong> Achieves 2NF and removes transitive dependencies (non-key attributes depend only on the primary key).</li>
+                </ul>
+                <p><strong>Example:</strong> Breaking down a single table with redundant data (e.g., student and course information) into multiple related tables (e.g., "Students," "Courses," and "Enrollments").</p>
+                <img src="norm.png" alt="Normalization Diagram" onclick="zoomImage('norm.png')">
+                <p class="image-caption">Normalization Diagram</p>
+            </section>
+
+            <section>
+                <h3>1.4 Introduction to SQL</h3>
+                <h4>History and Purpose of SQL</h4>
+                <p>SQL (Structured Query Language), the standard language for managing relational databases, was developed in the early 1970s by IBM researchers Donald D. Chamberlin and Raymond F. Boyce.
+                    Here's a more detailed look at its history:
+                    Foundation:
+                    The development of SQL stemmed from the relational model of data proposed by Edgar F. Codd.
+                    Initial Name:
+                    The language was initially called "SEQUEL" (Structured English QUERY Language) before being shortened to SQL.
+                    IBM's Role:
+                    Chamberlin and Boyce, working at IBM, developed SQL as a way to interact with relational databases.
+                    Commercialization:
+                    In the late 1970s, Relational Software Inc. (now Oracle) introduced the first commercially available implementation of SQL, Oracle V2.
+                    Standardization:
+                    The American National Standards Institute (ANSI) and the International Organization for Standardization (ISO) adopted SQL standards in 1986 and 1987, respectively.
+                    IBM System R:
+                    The original version of SQL was designed to manipulate and retrieve data stored in IBM's quasi-relational database management system, System R. Standard language for interacting with relational databases. Used for data retrieval, manipulation, and definition.</p>
+                    <img src="sqlhistrort.png" alt="SQL History Diagram" onclick="zoomImage('sqlhistrort.png')">
+                    <h4>SQL Standards (ANSI SQL)</h4>
+                    <p>ANSI (American National Standards Institute) defines standards for SQL. Ensures portability and compatibility across different DBMSs.</p>
+    
+                    <h4>Overview of SQL Commands (DDL, DML, DCL, TCL)</h4>
+                    <p><strong>DDL (Data Definition Language):</strong> Defines the structure of the database (e.g., CREATE, ALTER, DROP).</p>
+                    <p><strong>DML (Data Manipulation Language):</strong> Manipulates data within the database (e.g., SELECT, INSERT, UPDATE, DELETE).</p>
+                    <p><strong>DCL (Data Control Language):</strong> Controls access to the database (e.g., GRANT, REVOKE).</p>
+                    <p><strong>TCL (Transaction Control Language):</strong> Manages transactions (e.g., COMMIT, ROLLBACK).</p>
+                    <div class="example">
+                        <p><strong>Example:</strong></p>
+                        <pre><code>DDL: CREATE TABLE Students (StudentID INT PRIMARY KEY, Name VARCHAR(255));
+    DML: SELECT * FROM Students WHERE Name = 'Alice';
+    DCL: GRANT SELECT ON Students TO user1;
+    TCL: BEGIN TRANSACTION; INSERT INTO Students (StudentID, name) values (1,'bob'); COMMIT;</code></pre>
+                    </div>
+                </section>
+    
+                <section>
+                    <h3>1.5 Setting Up Your SQL Environment</h3>
+                    <h4>Choosing a DBMS</h4>
+                    <p>Factors to consider: features, performance, scalability, cost. Popular options: MySQL, PostgreSQL, SQL Server, SQLite.</p>
+    
+                    <h4>Installation and Basic Configuration</h4>
+                    <p>Download and install the chosen DBMS. Configure settings such as port numbers and security options.</p>
+    
+                    <h4>Introduction to Database Clients</h4>
+                    <p><strong>Graphical user interfaces (GUIs):</strong> pgAdmin (PostgreSQL), MySQL Workbench (MySQL), SQL Server Management Studio (SQL Server).</p>
+                    <p><strong>Command Line Interfaces:</strong> Using the command line to interact with the database. <strong>Example:</strong> <code>mysql</code> command line client.</p>
+                    <img src="client.png" alt="Database Client Screenshots" onclick="zoomImage('client.png')">
+                    <p class="image-caption">Database Client Screenshots</p>
+                </section>
+            </div>
+    
+            <div class="chapter-container" id="chapter2">
+               
+                <section>
+                  <h2>Chapter 2: Database Architecture and Models</h2>
+                  <section>
+                      <h3>2.1 Database Architecture</h3>
+                      <h4>Definition</h4>
+                      <p>Database architecture refers to the overall design, structure, and organization of a database system. It defines how data is stored, processed, managed, and accessed by users and applications. A well-defined architecture ensures efficiency, scalability, and security in database management.</p>
+              
+                      <h4>Types of Database Architecture</h4>
+                      <h5>1. Single-Tier Architecture</h5>
+                      <p>In a single-tier (or monolithic) architecture, the database and application reside on the same system. Users directly interact with the database without an intermediate server. Suitable for personal or small-scale applications but not ideal for large-scale systems due to performance limitations.</p>
+                      <p><strong>Example:</strong> MS Access, SQLite</p>
+              
+                      <h5>2. Two-Tier Architecture (Client-Server Model)</h5>
+                      <p>The client directly communicates with the database server, sending queries and receiving results. The database is hosted on a central server, while the client runs the application that interacts with it. Enhances performance and security compared to single-tier systems.</p>
+                      <p><strong>Example:</strong> MySQL with a client application like PHP or Java</p>
+                      <img src="twotier.png" alt="Two-Tier Architecture Diagram" onclick="zoomImage('twotier.png')">
+                      <p class="image-caption">Two-Tier Architecture Diagram</p>
+              
+                      <h5>3. Three-Tier Architecture</h5>
+                      <p>Introduces an intermediate application server between the client and the database. Clients interact with the application server, which processes requests before querying the database. Improves security, scalability, and flexibility as business logic is separated from data storage.</p>
+                      <p><strong>Example:</strong> A web application using a browser (client), a web server (middle tier), and a database server (backend).</p>
+                      <img src="threetier.png" alt="Three-Tier Architecture Diagram" onclick="zoomImage('threetier.png')">
+                      <p class="image-caption">Three-Tier Architecture Diagram</p>
+                  </section>
+              
+                  <section>
+                      <h3>2.2 Database Models</h3>
+                      <h4>Definition</h4>
+                      <p>A database model defines how data is structured, stored, and manipulated within a database system. It provides rules and guidelines for organizing data efficiently.</p>
+              
+                      <h4>Types of Database Models</h4>
+                      <h5>1. Hierarchical Model</h5>
+                      <p>Organizes data in a tree-like structure with parent-child relationships. Each parent node can have multiple child nodes, but each child has only one parent. Efficient for applications requiring a well-defined hierarchy but lacks flexibility for complex relationships.</p>
+                      <p><strong>Example:</strong> IBM Information Management System (IMS)</p>
+                      <img src="hrmodel.png" alt="Hierarchical Model Diagram" onclick="zoomImage('hrmodel.png')">
+                      <p class="image-caption">Hierarchical Model Diagram</p>
+              
+                      <h5>2. Network Model</h5>
+                      <p>More flexible than the hierarchical model, allowing multiple parent-child relationships. Uses graph structures with records as nodes and relationships as edges. Supports many-to-many relationships, making it suitable for complex applications.</p>
+                      <p><strong>Example:</strong> Integrated Data Store (IDS)</p>
+                      <img src="NetworkModel.webp" alt="Network Model Diagram" onclick="zoomImage('NetworkModel.webp')">
+                      <p class="image-caption">Network Model Diagram</p>
+              
+                      <h5>3. Relational Model (RDBMS)</h5>
+                      <p>Organizes data into tables (relations) with rows and columns. Uses primary and foreign keys to establish relationships between tables. Based on mathematical set theory and is widely used in modern databases.</p>
+                      <p><strong>Examples:</strong> MySQL, PostgreSQL, Oracle, SQL Server</p>
+                      <img src="rmodel.jpg" alt="Relational Model Diagram" onclick="zoomImage('rmodel.jpg')">
+                      <p class="image-caption">Relational Model Diagram</p>
+              
+                      <h5>4. Object-Oriented Model</h5>
+                      <p>Stores data as objects, similar to object-oriented programming. Objects contain both data and methods to manipulate that data. Used in applications requiring complex data structures and inheritance.</p>
+                      <p><strong>Example:</strong> ObjectDB, db4o</p>
+                      <img src="ObjectOrientedModel.webp" alt="Object-Oriented Model Diagram" onclick="zoomImage('ObjectOrientedModel.webp')">
+                      <p class="image-caption">Object-Oriented Model Diagram</p>
+              
+                      <h5>5. NoSQL Databases</h5>
+                      <p>Designed for handling large-scale, unstructured, or semi-structured data. Uses various models such as document, key-value, column-family, and graph databases. Provides high scalability, flexibility, and speed compared to traditional RDBMS.</p>
+                      <p><strong>Examples:</strong> MongoDB (Document), Redis (Key-Value), Cassandra (Column-Family), Neo4j (Graph)</p>
+                      <img src="nsql.jpg" alt="NoSQL Models Diagram" onclick="zoomImage('nsql.jpg')">
+                      <p class="image-caption">NoSQL Models Diagram</p>
+                  </section>
+              
+                  <section>
+                      <h3>2.3 Comparison of Database Models</h3>
+                      <table>
+                          <thead>
+                              <tr>
+                                  <th>Feature</th>
+                                  <th>Hierarchical</th>
+                                  <th>Network</th>
+                                  <th>Relational (RDBMS)</th>
+                                  <th>Object-Oriented</th>
+                                  <th>NoSQL</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr>
+                                  <td>Structure</td>
+                                  <td>Tree-based</td>
+                                  <td>Graph-based</td>
+                                  <td>Table-based</td>
+                                  <td>Object-based</td>
+                                  <td>Varies</td>
+                              </tr>
+                              <tr>
+                                  <td>Relationships</td>
+                                  <td>One-to-Many</td>
+                                  <td>Many-to-Many</td>
+                                  <td>Many-to-Many</td>
+                                  <td>Object Links</td>
+                                  <td>Flexible</td>
+                              </tr>
+                              <tr>
+                                  <td>Flexibility</td>
+                                  <td>Low</td>
+                                  <td>Medium</td>
+                                  <td>High</td>
+                                  <td>High</td>
+                                  <td>Very High</td>
+                              </tr>
+                              <tr>
+                                  <td>Query Language</td>
+                                  <td>Proprietary</td>
+                                  <td>Proprietary</td>
+                                  <td>SQL</td>
+                                  <td>OQL</td>
+                                  <td>Varies</td>
+                              </tr>
+                              <tr>
+                                  <td>Use Cases</td>
+                                  <td>File Systems</td>
+                                  <td>Telecom Networks</td>
+                                  <td>Business Applications</td>
+                                  <td>CAD, AI</td>
+                                  <td>Big Data, Real-time Apps</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </section>
+              
+                  <section>
+                      <h3>2.4 Database Storage and Indexing</h3>
+                      <h4>Storage Mechanisms</h4>
+                      <ul>
+                          <li><strong>Primary Storage:</strong> RAM, cache memory for temporary data processing.</li>
+                          <li><strong>Secondary Storage:</strong> Hard disks, SSDs for permanent storage.</li>
+                          <li><strong>Tertiary Storage:</strong> Magnetic tapes, optical disks for archival data.</li>
+                      </ul>
+                      <img src="storage.png" alt="Indexing Diagram" onclick="zoomImage('storage.png')">
+                      <h4>Indexing in Databases</h4>
+                      <p><strong>Definition:</strong> Indexing improves data retrieval speed by creating an internal structure that maps data locations efficiently.</p>
+                      <p><strong>Types of Indexing:</strong></p>
+                      <ul>
+                          <li><strong>Primary Index:</strong> Built on the primary key.</li>
+                          <li><strong>Secondary Index:</strong> Built on non-primary key attributes for faster search.</li>
+                          <li><strong>Clustered Index:</strong> Data is physically sorted based on the indexed column.</li>
+                          <li><strong>Non-Clustered Index:</strong> Index and data are stored separately, requiring additional lookup steps.</li>
+                      </ul>
+                      <p><strong>Example:</strong> A book index helping readers quickly find topics.</p>
+                      <img src="indexing.png" alt="Indexing Diagram" onclick="zoomImage('indexing.png')">
+                      <p class="image-caption">Indexing Diagram</p>
+                  </section>
+              </section>
+            </div>
+
+            <div class="chapter-container" id="chapter3">
+               
+              <section>
+                <h2>Chapter 3: Structured Query Language (SQL)</h2>
+                <section>
+                    <h3>3.1 Introduction to SQL</h3>
+                    <h4>Definition</h4>
+                    <p>SQL (Structured Query Language) is a standardized programming language used to manage, manipulate, and retrieve data in relational databases.</p>
+            
+                    <h4>Features of SQL</h4>
+                    <ul>
+                        <li>Easy to learn and use.</li>
+                        <li>Allows efficient data retrieval and manipulation.</li>
+                        <li>Supports database transactions, security, and access control.</li>
+                        <li>Compatible with various RDBMS like MySQL, PostgreSQL, Oracle, and SQL Server.</li>
+                    </ul>
+            
+                    <h4>Types of SQL Commands</h4>
+                    <p>SQL commands are categorized into five types:</p>
+                    <ul>
+                        <li><strong>DDL (Data Definition Language):</strong> Defines database structures.</li>
+                        <li><strong>DML (Data Manipulation Language):</strong> Handles data retrieval and modification.</li>
+                        <li><strong>DCL (Data Control Language):</strong> Manages user permissions.</li>
+                        <li><strong>TCL (Transaction Control Language):</strong> Manages transactions.</li>
+                        <li><strong>DQL (Data Query Language):</strong> Retrieves data from databases.</li>
+                    </ul>
+                </section>
+            
+                <section>
+                    <h3>3.2 Data Definition Language (DDL)</h3>
+                    <p>DDL commands define and modify database structures.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CREATE</td>
+                                <td>Creates a new database object (table, index, etc.).</td>
+                                <td><code>CREATE TABLE Students (ID INT PRIMARY KEY, Name VARCHAR(50));</code></td>
+                            </tr>
+                            <tr>
+                                <td>ALTER</td>
+                                <td>Modifies an existing database object.</td>
+                                <td><code>ALTER TABLE Students ADD Age INT;</code></td>
+                            </tr>
+                            <tr>
+                                <td>DROP</td>
+                                <td>Deletes a database object permanently.</td>
+                                <td><code>DROP TABLE Students;</code></td>
+                            </tr>
+                            <tr>
+                                <td>TRUNCATE</td>
+                                <td>Removes all records from a table but keeps the structure.</td>
+                                <td><code>TRUNCATE TABLE Students;</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="example">
+                        <p><strong>Example:</strong></p>
+                        <pre><code>CREATE TABLE Employees (
+                EmpID INT PRIMARY KEY,
+                Name VARCHAR(100),
+                Salary DECIMAL(10,2)
+            );</code></pre>
+                    </div>
+                </section>
+            
+                <section>
+                    <h3>3.3 Data Manipulation Language (DML)</h3>
+                    <p>DML commands manipulate database records.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>INSERT</td>
+                                <td>Adds new records.</td>
+                                <td><code>INSERT INTO Students VALUES (1, 'Alice', 20);</code></td>
+                            </tr>
+                            <tr>
+                                <td>UPDATE</td>
+                                <td>Modifies existing records.</td>
+                                <td><code>UPDATE Students SET Age = 21 WHERE ID = 1;</code></td>
+                            </tr>
+                            <tr>
+                                <td>DELETE</td>
+                                <td>Removes records from a table.</td>
+                                <td><code>DELETE FROM Students WHERE ID = 1;</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="example">
+                        <p><strong>Example:</strong></p>
+                        <pre><code>INSERT INTO Employees (EmpID, Name, Salary) VALUES (101, 'John Doe', 50000.00);
+            UPDATE Employees SET Salary = 55000.00 WHERE EmpID = 101;
+            DELETE FROM Employees WHERE EmpID = 101;</code></pre>
+                    </div>
+                </section>
+            
+                <section>
+                    <h3>3.4 Data Query Language (DQL)</h3>
+                    <p>DQL consists of the <code>SELECT</code> statement used for retrieving data.</p>
+                    <h5>Basic SELECT Statement</h5>
+                    <pre><code>SELECT column1, column2 FROM TableName;</code></pre>
+                    <div class="example">
+                        <p><strong>Example:</strong></p>
+                        <pre><code>SELECT Name, Age FROM Students;</code></pre>
+                    </div>
+            
+                    <h5>Using WHERE Clause</h5>
+                    <p>Filters records based on conditions.</p>
+                    <pre><code>SELECT * FROM Students WHERE Age > 18;</code></pre>
+            
+                    <h5>Using ORDER BY Clause</h5>
+                    <p>Sorts results in ascending (ASC) or descending (DESC) order.</p>
+                    <pre><code>SELECT * FROM Students ORDER BY Name ASC;</code></pre>
+            
+                    <h5>Using DISTINCT Clause</h5>
+                    <p>Retrieves unique values.</p>
+                    <pre><code>SELECT DISTINCT Major FROM Students;</code></pre>
+                </section>
+            
+                <section>
+                    <h3>3.5 Data Control Language (DCL)</h3>
+                    <p>DCL commands manage access permissions.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>GRANT</td>
+                                <td>Provides specific privileges to users.</td>
+                                <td><code>GRANT SELECT ON Students TO user1;</code></td>
+                            </tr>
+                            <tr>
+                                <td>REVOKE</td>
+                                <td>Removes assigned privileges.</td>
+                                <td><code>REVOKE SELECT ON Students FROM user1;</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            
+                <section>
+                    <h3>3.6 Transaction Control Language (TCL)</h3>
+                    <p>TCL commands handle database transactions.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>COMMIT</td>
+                                <td>Saves all changes made in a transaction.</td>
+                                <td><code>COMMIT;</code></td>
+                            </tr>
+                            <tr>
+                                <td>ROLLBACK</td>
+                                <td>Undoes changes made in the current transaction.</td>
+                                <td><code>ROLLBACK;</code></td>
+                            </tr>
+                            <tr>
+                                <td>SAVEPOINT</td>
+                                <td>Creates a temporary save point to rollback specific changes.</td>
+                                <td><code>SAVEPOINT SP1;</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="example">
+                        <p><strong>Example:</strong></p>
+                        <pre><code>BEGIN TRANSACTION;
+            UPDATE Employees SET Salary = 60000 WHERE EmpID = 101;
+            SAVEPOINT sp1;
+            UPDATE Employees SET Salary = 65000 WHERE EmpID = 101;
+            ROLLBACK TO sp1;
+            COMMIT;</code></pre>
+                    </div>
+                </section>
+            
+                <section>
+                    <h3>3.7 SQL Joins</h3>
+                    <p>Joins combine records from two or more tables based on related columns.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Join Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>INNER JOIN</td>
+                                <td>Returns records with matching values in both tables.</td>
+                            </tr>
+                            <tr>
+                                <td>LEFT JOIN</td>
+                                <td>Returns all records from the left table and matching records from the right table.</td>
+                            </tr>
+                            <tr>
+                                <td>RIGHT JOIN</td>
+                                <td>Returns all records from the right table and matching records from the left table.</td>
+                            </tr>
+                            <tr>
+                                <td>FULL JOIN</td>
+                                <td>Returns all records from both tables.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="example">
+                        <p><strong>Example:</strong></p>
+                        <pre><code>SELECT Students.Name, Courses.CourseName
+            FROM Students
+            INNER JOIN Courses ON Students.StudentID = Courses.StudentID;</code></pre>
+                    </div>
+                    <img src="sqljoin.jpg" alt="SQL Joins Diagram" onclick="zoomImage('sqljoin.jpg')">
+                    <p class="image-caption">SQL Joins Diagram</p>
+                </section>
+            
+                <section>
+                    <h3>3.8 Subqueries and Views</h3>
+                    <h5>Subqueries</h5>
+                    <p>A subquery is a query inside another query.</p>
+                    <div class="example">
+                        <p><strong>Example:</strong></p>
+                        <pre><code>SELECT Name FROM Students WHERE Age = (SELECT MAX(Age) FROM Students);</code></pre>
+                    </div>
+            
+                    <h5>Views</h5>
+                    <p>A view is a virtual table based on a query.</p>
+                    <div class="example">
+                        <p><strong>Example:</strong></p>
+                        <pre><code>CREATE VIEW StudentView AS
+            SELECT Name, Age FROM Students WHERE Age > 18;</code></pre>
+                    </div>
+                </section>
+            
+                <section>
+                    <h3>3.9 Indexing and Performance Optimization</h3>
+                    <h5>Indexes in SQL</h5>
+                    <p>Indexes improve query performance by allowing fast lookups.</p>
+                    <div class="example">
+                        <p><strong>Example:</strong></p>
+                        <pre><code>CREATE INDEX idx_name ON Students(Name);</code></pre>
+                    </div>
+            
+                    <h5>Performance Optimization Tips</h5>
+                    <ul>
+                        <li>Use proper indexes.</li>
+                        <li>Avoid unnecessary columns in SELECT queries.</li>
+                        <li>Normalize tables to reduce redundancy.</li>
+                        <li>Optimize joins with indexing.</li>
+                        <li>Use stored procedures for repetitive tasks.</li>
+                    </ul>
+                </section>
+            
+                <section>
+                    <h3>3.10 Conclusion</h3>
+                    <ul>
+                        <li>SQL is the standard language for managing relational databases.</li>
+                        <li>DDL, DML, DQL, DCL, and TCL cover different aspects of SQL operations.</li>
+                        <li>Joins, subqueries, and indexing improve data retrieval and performance.</li>
+                    </ul>
+                </section>
+            </section>
+              </div>
+              <div class="chapter-container" id="chapter4">
+                <section>
+                  <h2>Chapter 4: Advanced SQL and Database Security 🔐</h2>
+                  <section>
+                      <h3>4.1 Advanced SQL Concepts</h3>
+                      <h4>4.1.1 Stored Procedures</h4>
+                      <p>A stored procedure is a set of SQL statements that are stored in the database and executed as a single unit. Instead of writing and executing SQL queries manually each time, stored procedures allow users to execute pre-defined logic with a simple function call.</p>
+              
+                      <h5>Features of Stored Procedures:</h5>
+                      <ul>
+                          <li>Encapsulate complex logic into reusable components.</li>
+                          <li>Improve security by restricting direct access to tables.</li>
+                          <li>Enhance performance by reducing network traffic between applications and databases.</li>
+                      </ul>
+                      <img src="storedpro.jpg" alt="SQL Joins Diagram" onclick="zoomImage('storedpro.jpg')">
+
+                      <div class="example">
+                          <p><strong>Example: Creating a Stored Procedure in MySQL</strong></p>
+                          <pre><code>DELIMITER //
+              CREATE PROCEDURE GetStudentDetails (IN studentID INT)
+              BEGIN
+                  SELECT * FROM Students WHERE StudentID = studentID;
+              END //
+              DELIMITER ;</code></pre>
+                      </div>
+              
+                      <div class="example">
+                          <p><strong>Executing a Stored Procedure:</strong></p>
+                          <pre><code>CALL GetStudentDetails(101);</code></pre>
+                      </div>
+              
+                      <h5>Advantages of Stored Procedures:</h5>
+                      <ul>
+                          <li><strong>Code reusability:</strong> Reduces redundancy in writing SQL queries.</li>
+                          <li><strong>Faster execution:</strong> Optimized execution plans improve performance.</li>
+                          <li><strong>Security:</strong> Users execute stored procedures instead of manipulating tables directly.</li>
+                      </ul>
+              
+                      <h4>4.1.2 Triggers</h4>
+                      <p>A trigger is a database object that automatically executes a predefined action when specific events (INSERT, UPDATE, DELETE) occur in a table.</p>
+              
+                      <h5>Types of Triggers:</h5>
+                      <ul>
+                          <li><strong>Before Triggers:</strong> Executed before the operation (INSERT, UPDATE, DELETE).</li>
+                          <li><strong>After Triggers:</strong> Executed after the operation.</li>
+                          <li><strong>Instead of Triggers:</strong> Used in views to replace standard operations.</li>
+                      </ul>
+                      <img src="trigger.webp" alt="SQL Joins Diagram" onclick="zoomImage('trigger.webp')">
+
+                      <div class="example">
+                          <p><strong>Example: Creating a Trigger to Log Insertions in an Employee Table</strong></p>
+                          <pre><code>CREATE TRIGGER after_employee_insert
+              AFTER INSERT ON Employees
+              FOR EACH ROW
+              INSERT INTO EmployeeLog (EmployeeID, Action, Timestamp)
+              VALUES (NEW.EmployeeID, 'INSERT', NOW());</code></pre>
+                      </div>
+              
+                      <h5>Advantages of Triggers:</h5>
+                      <ul>
+                          <li>Automates database auditing and logging.</li>
+                          <li>Enforces business rules and data validation.</li>
+                          <li>Helps maintain referential integrity between tables.</li>
+                      </ul>
+              
+                      <h4>4.1.3 Views</h4>
+                      <p>A view is a virtual table that represents the result of a SQL query. It allows users to access specific columns or rows without modifying the actual database tables.</p>
+              
+                      <div class="example">
+                          <p><strong>Example: Creating a View for Active Students</strong></p>
+                          <pre><code>CREATE VIEW ActiveStudents AS
+              SELECT StudentID, Name, EnrollmentDate
+              FROM Students
+              WHERE Status = 'Active';</code></pre>
+                      </div>
+              
+                      <h5>Advantages of Views:</h5>
+                      <ul>
+                          <li><strong>Data security:</strong> Restricts access to specific data.</li>
+                          <li><strong>Simplifies queries:</strong> Provides pre-filtered data for easy retrieval.</li>
+                          <li><strong>Data abstraction:</strong> Hides the complexity of joins and aggregations.</li>
+                      </ul>
+                      <img src="view.png" alt="SQL Joins Diagram" onclick="zoomImage('view.png')">
+
+                  </section>
+              
+                  <section>
+                      <h3>4.2 Advanced Query Optimization</h3>
+                      <h4>4.2.1 Indexing for Performance</h4>
+                      <p>Indexes enhance database performance by allowing quick lookups of rows based on specific columns.</p>
+              
+                      <div class="example">
+                          <p><strong>Example: Creating an Index on a Student Name Column</strong></p>
+                          <pre><code>CREATE INDEX idx_student_name ON Students(Name);</code></pre>
+                      </div>
+              
+                      <div class="example">
+                          <p><strong>Checking an Execution Plan for Query Optimization</strong></p>
+                          <pre><code>EXPLAIN SELECT * FROM Students WHERE Name = 'Alice';</code></pre>
+                      </div>
+              
+                      <h5>Best Practices:</h5>
+                      <ul>
+                          <li>Use indexes on frequently searched columns.</li>
+                          <li>Avoid excessive indexing, as it increases storage requirements.</li>
+                          <li>Use clustered indexes for primary keys.</li>
+                      </ul>
+              
+                      <h4>4.2.2 Partitioning for Large Datasets</h4>
+                      <p>Partitioning helps in managing large tables by dividing data into smaller, manageable parts.</p>
+              
+                      <div class="example">
+                          <p><strong>Example: Range Partitioning on an Orders Table</strong></p>
+                          <pre><code>CREATE TABLE Orders (
+                  OrderID INT NOT NULL,
+                  OrderDate DATE NOT NULL,
+                  CustomerID INT NOT NULL,
+                  PRIMARY KEY (OrderID, OrderDate)
+              ) PARTITION BY RANGE(OrderDate) (
+                  PARTITION p1 VALUES LESS THAN ('2023-01-01'),
+                  PARTITION p2 VALUES LESS THAN ('2024-01-01')
+              );</code></pre>
+                      </div>
+              
+                      <h5>Benefits of Partitioning:</h5>
+                      <ul>
+                          <li>Improves query performance by scanning smaller subsets of data.</li>
+                          <li>Enhances manageability of large tables.</li>
+                          <li>Reduces storage cost by allowing older partitions to be archived.</li>
+                      </ul>
+                  </section>
+              
+                  <section>
+                      <h3>4.3 Database Security Best Practices</h3>
+                      <h4>4.3.1 User Privileges and Role Management</h4>
+                      <p>Database security starts with proper user access control. Instead of granting full database privileges to every user, administrators can define specific roles.</p>
+                      <img src="databasesecure.jpg" alt="SQL Joins Diagram" onclick="zoomImage('databasesecure.jpg')">
+
+                      <div class="example">
+                          <p><strong>Example: Creating a Role and Assigning Privileges</strong></p>
+                          <pre><code>CREATE ROLE AdminRole;
+              GRANT ALL PRIVILEGES ON Students TO AdminRole;
+              GRANT AdminRole TO 'admin_user';</code></pre>
+                      </div>
+              
+                      <h4>4.3.2 Encryption in Databases</h4>
+                      <p>Encryption is a technique used to secure sensitive data by converting it into unreadable text using cryptographic algorithms.</p>
+              
+                      <div class="example">
+                          <p><strong>Example: Encrypting Data in MySQL</strong></p>
+                          <pre><code>INSERT INTO SecureData (ID, EncryptedInfo)
+              VALUES (1, AES_ENCRYPT('Sensitive Data', 'encryption_key'));</code></pre>
+                      </div>
+              
+                      <div class="example">
+                          <p><strong>Decrypting Data:</strong></p>
+                          <pre><code>SELECT AES_DECRYPT(EncryptedInfo, 'encryption_key') FROM SecureData;</code></pre>
+                      </div>
+              
+                      <h5>Types of Encryption:</h5>
+                      <ul>
+                          <li><strong>Data-at-rest encryption:</strong> Protects stored data.</li>
+                          <li><strong>Data-in-transit encryption:</strong> Protects data transmitted over networks.</li>
+                      </ul>
+              
+                      <h4>4.3.3 SQL Injection Prevention</h4>
+                      <p>SQL Injection is a critical vulnerability where attackers inject malicious SQL queries.</p>
+              
+                      <h5>Best Practices:</h5>
+                      <ul>
+                          <li>Use prepared statements to avoid direct query concatenation.</li>
+                          <li>Sanitize user input.</li>
+                          <li>Use web application firewalls (WAF).</li>
+                      </ul>
+              
+                      <div class="example">
+                          <p><strong>Example (Safe SQL Query in Python):</strong></p>
+                          <pre><code>cursor.execute("SELECT * FROM Users WHERE username = %s", (username,))</code></pre>
+                      </div>
+              
+                      <h4>4.3.4 Auditing and Logging</h4>
+                      <p>Database auditing helps monitor user activities and detect unauthorized access attempts.</p>
+              
+                      <div class="example">
+                          <p><strong>Example: Creating an Audit Log Trigger</strong></p>
+                          <pre><code>CREATE TRIGGER log_changes
+              AFTER UPDATE ON Employees
+              FOR EACH ROW
+              INSERT INTO AuditLog (UserID, ChangeTime) VALUES (CURRENT_USER(), NOW());</code></pre>
+                      </div>
+              
+                      <h5>Benefits of Auditing:</h5>
+                      <ul>
+                          <li>Tracks modifications to sensitive data.</li>
+                          <li>Identifies unauthorized changes in real time.</li>
+                          <li>Improves compliance with security regulations.</li>
+                      </ul>
+                  </section>
+              
+                  <section>
+                      <h3>4.4 Backup and Recovery</h3>
+                      <h4>4.4.1 Types of Database Backups</h4>
+                      <ul>
+                          <li><strong>Full Backup:</strong> Complete database backup.</li>
+                          <li><strong>Incremental Backup:</strong> Only changed data is backed up.</li>
+                          <li><strong>Differential Backup:</strong> Saves changes since the last full backup.</li>
+                      </ul>
+                      <img src="backup.png" alt="SQL Joins Diagram" onclick="zoomImage('backup.png')">
+
+                      <div class="example">
+                          <p><strong>Example: Taking a Full Backup in MySQL</strong></p>
+                          <pre><code>mysqldump -u root -p database_name > backup.sql</code></pre>
+                      </div>
+              
+                      <div class="example">
+                          <p><strong>Restoring a Database Backup:</strong></p>
+                          <pre><code>mysql -u root -p database_name < backup.sql</code></pre>
+                      </div>
+              
+                      <h5>Importance of Backups:</h5>
+                      <ul>
+                          <li>Prevents data loss due to system failures.</li>
+                          <li>Ensures business continuity.</li>
+                          <li>Facilitates data recovery after accidental deletions.</li>
+                      </ul>
+                  </section>
+              
+                  <section>
+                      <h3>4.5 Conclusion</h3>
+                      <p>In this chapter, we explored advanced SQL techniques such as stored procedures, triggers, views, and query optimization. We also covered essential database security measures like role management, encryption, and SQL injection prevention. Lastly, we discussed backup and recovery strategies to ensure data protection.</p>
+              
+                      <h5>Key Takeaways:</h5>
+                      <ul>
+                          <li>Stored procedures and triggers improve database efficiency.</li>
+                          <li>Indexing and partitioning optimize query performance.</li>
+                          <li>Strong security measures (encryption, access control) protect sensitive data.</li>
+                          <li>Regular backups prevent data loss.</li>
+                      </ul>
+                  </section>
+              </section>
+            </div>
+            <div class="chapter-container" id="chapter5">
+              <section>
+                <h2>Chapter 5: NoSQL and Modern Database Technologies 📡</h2>
+                <section>
+                    <h3>5.1 Introduction to NoSQL Databases</h3>
+                    <p>Traditional relational databases (RDBMS) follow a structured approach with tables, rows, and strict schemas. However, modern applications—especially those involving big data, IoT, and real-time processing—require flexible, scalable databases. This is where NoSQL databases come in.</p>
+            
+                    <h4>5.1.1 What is NoSQL?</h4>
+                    <p>NoSQL (Not Only SQL) databases are designed to handle large volumes of data, high-speed processing, and horizontal scaling. Unlike relational databases, NoSQL databases:</p>
+                    <ul>
+                        <li>Do not require a fixed schema (schema-less).</li>
+                        <li>Use flexible data models (JSON, key-value pairs, graphs, etc.).</li>
+                        <li>Are highly scalable (scale out instead of scaling up).</li>
+                        <li>Support unstructured, semi-structured, and structured data.</li>
+                    </ul>
+            
+                    <h4>5.1.2 CAP Theorem and NoSQL</h4>
+                    <p>NoSQL databases follow the CAP Theorem, which states that in a distributed system, you can only have two of the following three properties:</p>
+                    <ul>
+                        <li><strong>Consistency (C):</strong> Every read gets the most recent write.</li>
+                        <li><strong>Availability (A):</strong> Every request receives a response (even if outdated).</li>
+                        <li><strong>Partition Tolerance (P):</strong> The system remains operational despite network failures.</li>
+                    </ul>
+                    <p>Types of NoSQL databases choose different trade-offs:</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Database Type</th>
+                                <th>CAP Property Focused</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>MongoDB</td>
+                                <td>CP (Consistency + Partition Tolerance)</td>
+                            </tr>
+                            <tr>
+                                <td>Cassandra</td>
+                                <td>AP (Availability + Partition Tolerance)</td>
+                            </tr>
+                            <tr>
+                                <td>DynamoDB</td>
+                                <td>A flexible balance between all three</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            
+                <section>
+                    <h3>5.2 Types of NoSQL Databases</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>NoSQL Type</th>
+                                <th>Description</th>
+                                <th>Examples</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Key-Value Store</td>
+                                <td>Data is stored as key-value pairs. Used for caching and session storage.</td>
+                                <td>Redis, DynamoDB</td>
+                            </tr>
+                            <tr>
+                                <td>Document Store</td>
+                                <td>Stores JSON or BSON documents. Used for web applications and content management.</td>
+                                <td>MongoDB, CouchDB</td>
+                            </tr>
+                            <tr>
+                                <td>Column-Family Store</td>
+                                <td>Uses column-oriented storage for high-performance analytics.</td>
+                                <td>Apache Cassandra, HBase</td>
+                            </tr>
+                            <tr>
+                                <td>Graph Database</td>
+                                <td>Uses nodes and edges for complex relationships. Ideal for social networks and fraud detection.</td>
+                                <td>Neo4j, ArangoDB</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <img src="nosqltypes.webp" alt="future " onclick="zoomImage('nosqltypes.webp')">
+
+                </section>
+            
+                <section>
+                    <h3>5.3 MongoDB – A Popular Document-Oriented NoSQL Database</h3>
+                    <h4>5.3.1 MongoDB Architecture</h4>
+                    <p>MongoDB is a document-based NoSQL database that stores data in JSON-like documents.</p>
+                    <img src="MongoDB-Architecture.png" alt="future " onclick="zoomImage('MongoDB-Architecture.png')">
+                    <ul>
+                        <li><strong>Collections:</strong> Like tables in SQL.</li>
+                        <li><strong>Documents:</strong> Like rows but flexible (fields can differ).</li>
+                        <li><strong>Indexes:</strong> Improve query performance.</li>
+                        <li><strong>Sharding & Replication:</strong> Ensures high availability.</li>
+                    </ul>
+            
+                    <div class="example">
+                        <p><strong>Example: Inserting Data in MongoDB</strong></p>
+                        <pre><code>{
+               "_id": 1,
+               "name": "Sanket Gudade",
+               "age": 20,
+               "skills": ["Python", "SQL", "Machine Learning"]
+            }</code></pre>
+                    </div>
+            
+                    <div class="example">
+                        <p><strong>Equivalent MongoDB Command:</strong></p>
+                        <pre><code>db.students.insertOne({
+               _id: 1,
+               name: "Sanket Gudade",
+               age: 20,
+               skills: ["Python", "SQL", "Machine Learning"]
+            });</code></pre>
+                    </div>
+            
+                    <h4>5.3.2 Querying MongoDB</h4>
+                    <div class="example">
+                        <p><strong>Find all students aged 20:</strong></p>
+                        <pre><code>db.students.find({ age: 20 });</code></pre>
+                    </div>
+            
+                    <div class="example">
+                        <p><strong>Updating a Document:</strong></p>
+                        <pre><code>db.students.updateOne(
+               { name: "Sanket Gudade" },
+               { $set: { age: 21 } }
+            );</code></pre>
+                    </div>
+            
+                    <div class="example">
+                        <p><strong>Deleting a Document:</strong></p>
+                        <pre><code>db.students.deleteOne({ name: "Sanket Gudade" });</code></pre>
+                    </div>
+                </section>
+            
+                <section>
+                    <h3>5.4 SQL vs. NoSQL – A Comparative Analysis</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>SQL (Relational)</th>
+                                <th>NoSQL (Non-Relational)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Schema</td>
+                                <td>Fixed, predefined</td>
+                                <td>Flexible, schema-less</td>
+                            </tr>
+                            <tr>
+                                <td>Data Storage</td>
+                                <td>Tables (rows, columns)</td>
+                                <td>JSON, key-value, graph, column store</td>
+                            </tr>
+                            <tr>
+                                <td>Scalability</td>
+                                <td>Vertical (scale up)</td>
+                                <td>Horizontal (scale out)</td>
+                            </tr>
+                            <tr>
+                                <td>ACID Compliance</td>
+                                <td>Strong (ACID)</td>
+                                <td>Eventual consistency (CAP theorem)</td>
+                            </tr>
+                            <tr>
+                                <td>Best For</td>
+                                <td>Structured data, transactions</td>
+                                <td>Big data, real-time applications</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            
+                <section>
+                    <h3>5.5 Advanced NoSQL Technologies and Use Cases</h3>
+                    <h4>5.5.1 Time-Series Databases (TSDBs)</h4>
+                    <p>Optimized for timestamped data (IoT sensors, financial markets, server logs).</p>
+                    <p><strong>Examples:</strong> InfluxDB, TimescaleDB.</p>
+            
+                    <h4>5.5.2 Blockchain Databases</h4>
+                    <p>Distributed ledger systems for secure transactions.</p>
+                    <p><strong>Examples:</strong> BigchainDB, Hyperledger.</p>
+            
+                    <h4>5.5.3 Cloud Databases</h4>
+                    <p>Fully managed databases hosted on the cloud (AWS, Google Cloud, Azure).</p>
+                    <p><strong>Examples:</strong> Amazon RDS, Firebase, Google BigQuery.</p>
+            
+                    <h4>5.5.4 Graph Databases – Managing Complex Relationships</h4>
+                    <p>Ideal for social networks, fraud detection, recommendation engines.</p>
+                    <p>Uses nodes and edges to represent relationships.</p>
+                    <img src="advsql.svg" alt="future " onclick="zoomImage('advsql.svg')">
+
+                    <div class="example">
+                        <p><strong>Example:</strong></p>
+                        <pre><code>MATCH (u:User)-[:FRIENDS_WITH]->(f:User)
+            WHERE u.name = "Sanket"
+            RETURN f</code></pre>
+                    </div>
+                </section>
+            
+                <section>
+                    <h3>5.6 Choosing the Right Database</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Requirement</th>
+                                <th>Recommended Database</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Relational Transactions</td>
+                                <td>MySQL, PostgreSQL, Oracle</td>
+                            </tr>
+                            <tr>
+                                <td>High-Speed Caching</td>
+                                <td>Redis, Memcached</td>
+                            </tr>
+                            <tr>
+                                <td>Big Data Processing</td>
+                                <td>Apache Cassandra, MongoDB</td>
+                            </tr>
+                            <tr>
+                                <td>Graph-Based Relationships</td>
+                                <td>Neo4j, ArangoDB</td>
+                            </tr>
+                            <tr>
+                                <td>IoT & Sensor Data</td>
+                                <td>InfluxDB, TimescaleDB</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            
+                <section>
+                    <h3>5.7 Future Trends in Databases 🚀</h3>
+                    <h4>5.7.1 AI-Driven Databases</h4>
+                    <ul>
+                        <li>Self-optimizing queries</li>
+                        <li>Predictive analytics</li>
+                        <li>Automated performance tuning</li>
+                    </ul>
+                    <img src="future.webp" alt="future " onclick="zoomImage('future.webp')">
+
+                    <h4>5.7.2 Quantum Databases</h4>
+                    <p>Utilizing quantum computing for ultra-fast transactions.</p>
+                    <p><strong>Examples:</strong> IBM and Google are developing early models.</p>
+            
+                    <h4>5.7.3 Edge Databases</h4>
+                    <p>Databases running on IoT devices for real-time processing.</p>
+                    <p><strong>Example:</strong> AWS Greengrass</p>
+            
+                    <h4>5.7.4 Serverless Databases</h4>
+                    <p>Fully managed, pay-per-use databases.</p>
+                    <p><strong>Examples:</strong> AWS Aurora Serverless, Google Firestore</p>
+                </section>
+            
+                <section>
+                    <h3>5.8 Summary & Key Takeaways</h3>
+                    <ul>
+                        <li>NoSQL databases are highly scalable, flexible, and ideal for big data applications.</li>
+                        <li>MongoDB is a leading document-based database used in modern applications.</li>
+                        <li>SQL vs. NoSQL depends on your application's needs (structured vs. unstructured).</li>
+                        <li>Emerging technologies like blockchain, time-series databases, and AI-powered databases are shaping the future.</li>
+                        <li>Cloud, quantum computing, and edge databases will revolutionize database technology.</li>
+                    </ul>
+                    <h2><strong>🚀 This concludes the final chapter. Now go build something amazing! 🔥</strong></h2>
+                </section>
+            </section>
+            </div>
+
+
+
+               <div class="chapter-navigation">
+                <button class="chapter-button" onclick="showChapter('chapter1')">Chapter 1</button>
+                <button class="chapter-button" onclick="showChapter('chapter2')">Chapter 2</button>
+                <button class="chapter-button" onclick="showChapter('chapter3')">Chapter 3</button>
+                <button class="chapter-button" onclick="showChapter('chapter4')">Chapter 4</button>
+                <button class="chapter-button" onclick="showChapter('chapter5')">Chapter 5</button>
+
+            </div>
+        </div>
+        <script>
+            function zoomImage(imageSrc) {
+                const zoomedImageDiv = document.createElement('div');
+                zoomedImageDiv.classList.add('zoomed-image');
+    
+                const zoomedImg = document.createElement('img');
+                zoomedImg.src = imageSrc;
+    
+                zoomedImageDiv.appendChild(zoomedImg);
+                document.body.appendChild(zoomedImageDiv);
+    
+                zoomedImageDiv.addEventListener('click', () => {
+                    document.body.removeChild(zoomedImageDiv);
+                });
+            }
+    
+            function showChapter(chapterId) {
+                const chapters = document.querySelectorAll('.chapter-container');
+                chapters.forEach(chapter => chapter.classList.remove('active'));
+                document.getElementById(chapterId).classList.add('active');
+            }
+        </script>
+    </body>
+    </html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Battle - 2 Player Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            width: 400px;
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .player {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        #player1 {
+            background-color: #ffcccc;
+            color: #cc0000;
+        }
+        
+        #player2 {
+            background-color: #ccccff;
+            color: #0000cc;
+        }
+        
+        .score {
+            font-size: 24px;
+            margin-top: 5px;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(8, 50px);
+            grid-template-rows: repeat(8, 50px);
+            gap: 5px;
+            background-color: #ddd;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .cell {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        
+        .player1 {
+            background-color: #ff9999;
+        }
+        
+        .player2 {
+            background-color: #9999ff;
+        }
+        
+        .controls {
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .timer {
+            font-size: 24px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        
+        .message {
+            font-size: 18px;
+            margin-top: 10px;
+            height: 24px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Color Battle</h1>
+    <div class="scoreboard">
+        <div class="player" id="player1">
+            Player 1 (Red)
+            <div class="score" id="score1">0</div>
+        </div>
+        <div class="player" id="player2">
+            Player 2 (Blue)
+            <div class="score" id="score2">0</div>
+        </div>
+    </div>
+    
+    <div class="timer" id="timer">Time: 60</div>
+    <div class="message" id="message"></div>
+    
+    <div class="game-board" id="gameBoard"></div>
+    
+    <div class="controls">
+        <button id="resetBtn">New Game</button>
+    </div>
+    
+    <script>
+        // Game state
+        let currentPlayer = 1;
+        let scores = [0, 0];
+        let gameTime = 60;
+        let timer;
+        let gameActive = false;
+        let board = Array(64).fill(0); // 8x8 grid (0 = empty, 1 = player1, 2 = player2)
+        
+        // DOM elements
+        const gameBoard = document.getElementById('gameBoard');
+        const score1 = document.getElementById('score1');
+        const score2 = document.getElementById('score2');
+        const player1 = document.getElementById('player1');
+        const player2 = document.getElementById('player2');
+        const resetBtn = document.getElementById('resetBtn');
+        const timerDisplay = document.getElementById('timer');
+        const messageDisplay = document.getElementById('message');
+        
+        // Initialize the game board
+        function initBoard() {
+            gameBoard.innerHTML = '';
+            board = Array(64).fill(0);
+            
+            for (let i = 0; i < 64; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.index = i;
+                cell.addEventListener('click', handleCellClick);
+                gameBoard.appendChild(cell);
+            }
+        }
+        
+        // Handle cell clicks
+        function handleCellClick(e) {
+            if (!gameActive) return;
+            
+            const index = parseInt(e.target.dataset.index);
+            
+            // Only allow claiming empty cells
+            if (board[index] === 0) {
+                board[index] = currentPlayer;
+                updateCell(index);
+                
+                // Update score
+                scores[currentPlayer - 1]++;
+                updateScores();
+                
+                // Switch player
+                currentPlayer = currentPlayer === 1 ? 2 : 1;
+                highlightCurrentPlayer();
+            }
+        }
+        
+        // Update cell appearance
+        function updateCell(index) {
+            const cell = gameBoard.children[index];
+            if (board[index] === 1) {
+                cell.classList.add('player1');
+                cell.textContent = '1';
+            } else if (board[index] === 2) {
+                cell.classList.add('player2');
+                cell.textContent = '2';
+            }
+        }
+        
+        // Update score display
+        function updateScores() {
+            score1.textContent = scores[0];
+            score2.textContent = scores[1];
+        }
+        
+        // Highlight current player
+        function highlightCurrentPlayer() {
+            if (currentPlayer === 1) {
+                player1.style.boxShadow = '0 0 10px rgba(255,0,0,0.5)';
+                player2.style.boxShadow = 'none';
+            } else {
+                player2.style.boxShadow = '0 0 10px rgba(0,0,255,0.5)';
+                player1.style.boxShadow = 'none';
+            }
+        }
+        
+        // Start the game timer
+        function startTimer() {
+            gameTime = 60;
+            timerDisplay.textContent = `Time: ${gameTime}`;
+            
+            timer = setInterval(() => {
+                gameTime--;
+                timerDisplay.textContent = `Time: ${gameTime}`;
+                
+                if (gameTime <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        // End the game
+        function endGame() {
+            clearInterval(timer);
+            gameActive = false;
+            
+            let winner;
+            if (scores[0] > scores[1]) {
+                winner = 'Player 1 (Red) wins!';
+            } else if (scores[1] > scores[0]) {
+                winner = 'Player 2 (Blue) wins!';
+            } else {
+                winner = "It's a tie!";
+            }
+            
+            messageDisplay.textContent = `Game over! ${winner}`;
+        }
+        
+        // Reset the game
+        function resetGame() {
+            clearInterval(timer);
+            currentPlayer = 1;
+            scores = [0, 0];
+            gameActive = true;
+            messageDisplay.textContent = '';
+            
+            updateScores();
+            initBoard();
+            highlightCurrentPlayer();
+            startTimer();
+        }
+        
+        // Event listeners
+        resetBtn.addEventListener('click', resetGame);
+        
+        // Initialize the game
+        resetGame();
+    </script>
+</body>
+</html>
